@@ -2,6 +2,9 @@
 #include "machine.hpp"
 #include <stdlib.h>
 #include <vector>
+#include <algorithm>
+
+#define lastPopulation populations.back().machinesPositions
 
 void Algorithm::feedMachines()
 {
@@ -10,7 +13,11 @@ void Algorithm::feedMachines()
     machineBuilder.readCost(consts::costPath);
     machineBuilder.readFlow(consts::flowPath);
     machines = machineBuilder.makeMachines();
-    results.push_back({});
+}
+
+void Algorithm::createNewPopulation()
+{
+    populations.push_back({});
 }
 
 inline int Algorithm::calculateDistance(int x1, int y1, int x2, int y2)
@@ -18,14 +25,14 @@ inline int Algorithm::calculateDistance(int x1, int y1, int x2, int y2)
     return abs(x1 - x2) + abs(y1 - y2);
 }
 
-int Algorithm::calculateTotalCost()
+long long Algorithm::calculateTotalCost()
 {
-    int cost = 0;
+    long long cost = 0;
     for (int i = 0; i < machines.size(); ++i)
     {
         for (int j = i; j < machines.size(); ++j)
         {
-            cost += machines[i].costs[j] * machines[i].flows[j] * calculateDistance(machines[i].x, machines[i].y, machines[j].x, machines[j].y);
+            cost += machines[i].costs[j] * machines[i].flows[j] * calculateDistance(lastPopulation[i].x, lastPopulation[i].y, lastPopulation[j].x, lastPopulation[j].y);
         }
     }
     return cost;
@@ -33,19 +40,29 @@ int Algorithm::calculateTotalCost()
 
 void Algorithm::randPositions()
 {
-    int x, y;
-    std::vector<Result> usedCords;
-    for (auto &result : results.back())
+    std::random_shuffle(positions.begin(), positions.end());
+    for (int i = 0; i < consts::machinesAmmount; ++i)
     {
-        x = rand() % consts::width;
-        y = rand() % consts::height;
-        while (std::count(usedCords.begin(), usedCords.end(), std::pair<int, int>(x, y)))
+        lastPopulation[i] = positions[i];
+    }
+}
+
+void Algorithm::generatePositions()
+{
+    for (int x = 0; x < consts::width; ++x)
+    {
+        for (int y = 0; y < consts::height; ++y)
         {
-            x = rand() % consts::width;
-            y = rand() % consts::height;
+            positions[x * consts::height + y] = Position{x, y};
         }
-        machine.x = x;
-        machine.y = y;
-        usedCords.push_back(std::pair<int, int>(x, y));
+    }
+}
+
+void Algorithm::printResults()
+{
+    for (int i = 0; i < populations.size(); ++i)
+    {
+        std::cout << "-------------------\npopulation: " << i << ", cost: " << populations[i].cost << std::endl;
+        populations[i].printPositions();
     }
 }

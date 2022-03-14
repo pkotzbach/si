@@ -8,18 +8,25 @@ using json = nlohmann::json;
 int main()
 {
     Algorithm alg;
+    long long cost = 94832908519, newCost;
+
     alg.feedMachines();
-    // alg.machines[0].print();
-    int cost = 1000000, newCost;
-    for (int i = 0; i < 20000; ++i)
+    alg.generatePositions();
+    for (int j = 0; j < 1; ++j)
     {
-        alg.randPositions();
-        newCost = alg.calculateTotalCost();
-        // std::cout << newCost << std::endl;
-        if (newCost < cost)
+        cost = 94832908519;
+        alg.createNewPopulation();
+        for (int i = 0; i < 10000; ++i)
         {
-            cost = newCost;
+            alg.randPositions();
+            newCost = alg.calculateTotalCost();
+            if (newCost < cost)
+            {
+                cost = newCost;
+            }
         }
+        alg.populations.back().cost = cost;
     }
-    std::cout << cost;
+    // std::cout << alg.results.size();
+    alg.printResults();
 }

@@ -12,21 +12,15 @@ struct Machine
 {
     int costs[consts::machinesAmmount];
     int flows[consts::machinesAmmount];
-
-    void print()
-    {
-        std::cout << "x: " << x << ", y: " << y << std::endl;
-        for (int i = 0; i < consts::machinesAmmount; i++)
-        {
-            std::cout << "machine: " << i << ", cost: " << costs[i] << ", flow: " << flows[i] << std::endl;
-        }
-    }
 };
 
-struct Result
+struct Position
 {
     int x;
     int y;
+
+    // void print() { std::cout << x << " " << y << std::endl; }
+    std::string toString() { return "(" + std::to_string(x) + ", " + std::to_string(y) + ")"; }
 };
 
 struct MachinesBuilder
