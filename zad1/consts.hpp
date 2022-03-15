@@ -8,4 +8,5 @@ namespace consts
     const int width = 3;
     const int height = 3;
     const int machinesAmmount = 9;
+    const int populationSize = 2000;
 }

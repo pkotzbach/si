@@ -4,7 +4,11 @@
 #include <vector>
 #include <algorithm>
 
-#define lastPopulation populations.back().machinesPositions
+inline int calculateDistance(const Position &pos1, const Position &pos2)
+{
+    // std::cout << pos1.x << " " << pos1.y << ", " << pos2.x << " " << pos2.y << std::endl;
+    return abs(pos1.x - pos2.x) + abs(pos1.y - pos2.y);
+}
 
 void Algorithm::feedMachines()
 {
@@ -15,35 +19,26 @@ void Algorithm::feedMachines()
     machines = machineBuilder.makeMachines();
 }
 
-void Algorithm::createNewPopulation()
-{
-    populations.push_back({});
-}
-
-inline int Algorithm::calculateDistance(int x1, int y1, int x2, int y2)
-{
-    return abs(x1 - x2) + abs(y1 - y2);
-}
-
-long long Algorithm::calculateTotalCost()
+long long Algorithm::calculateCost(int fabricId)
 {
     long long cost = 0;
     for (int i = 0; i < machines.size(); ++i)
     {
         for (int j = i; j < machines.size(); ++j)
         {
-            cost += machines[i].costs[j] * machines[i].flows[j] * calculateDistance(lastPopulation[i].x, lastPopulation[i].y, lastPopulation[j].x, lastPopulation[j].y);
+            cost += machines[i].costs[j] * machines[i].flows[j] * calculateDistance(population[fabricId].machinesPositions[i], population[fabricId].machinesPositions[j]);
         }
     }
     return cost;
 }
 
-void Algorithm::randPositions()
+void Algorithm::randPositions(int fabricId)
 {
     std::random_shuffle(positions.begin(), positions.end());
     for (int i = 0; i < consts::machinesAmmount; ++i)
     {
-        lastPopulation[i] = positions[i];
+        population[fabricId].machinesPositions[i].x = positions[i].x;
+        population[fabricId].machinesPositions[i].y = positions[i].y;
     }
 }
 
@@ -60,9 +55,8 @@ void Algorithm::generatePositions()
 
 void Algorithm::printResults()
 {
-    for (int i = 0; i < populations.size(); ++i)
+    for (int i = 0; i < population.size(); ++i)
     {
-        std::cout << "-------------------\npopulation: " << i << ", cost: " << populations[i].cost << std::endl;
-        populations[i].printPositions();
+        std::cout << "population: " << i << ", cost: " << population[i].cost << std::endl;
     }
 }

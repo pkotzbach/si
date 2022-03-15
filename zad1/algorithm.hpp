@@ -3,7 +3,7 @@
 #include "machine.hpp"
 #include "consts.hpp"
 
-struct Population
+struct Fabric
 {
     std::array<Position, consts::machinesAmmount> machinesPositions;
     long long cost;
@@ -19,14 +19,12 @@ struct Population
 struct Algorithm
 {
     std::array<Machine, consts::machinesAmmount> machines;
-    std::vector<Population> populations;
+    std::array<Fabric, consts::populationSize> population;
     std::array<Position, consts::width * consts::height> positions;
 
     void feedMachines();
-    long long calculateTotalCost();
-    inline int calculateDistance(int x1, int y1, int x2, int y2);
-    void randPositions();
+    long long calculateCost(int fabricId);
+    void randPositions(int fabricId);
     void generatePositions();
-    void createNewPopulation();
     void printResults();
 };
