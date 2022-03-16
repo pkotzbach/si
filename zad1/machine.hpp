@@ -18,9 +18,13 @@ struct Position
 {
     int x;
     int y;
+    int machineId;
 
-    // void print() { std::cout << x << " " << y << std::endl; }
     std::string toString() { return "(" + std::to_string(x) + ", " + std::to_string(y) + ")"; }
+    bool operator==(Position &pos)
+    {
+        return pos.x == x && pos.y == y;
+    }
 };
 
 struct MachinesBuilder
