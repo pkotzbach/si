@@ -2,6 +2,7 @@
 #include <fstream>
 #include "algorithm.hpp"
 #include "consts.hpp"
+#include "factory.hpp"
 
 #define mutationDebug 0
 
@@ -21,7 +22,7 @@ int main()
         alg.randPositions(i);
     }
 
-    long long cost = alg.getBestCost();
+    int cost = alg.getBestCost();
     std::cout << cost << std::endl;
 
     for (int i = 0; i < consts::howManyPopulations; ++i)
@@ -30,7 +31,7 @@ int main()
         while (newPopulation.size() < consts::populationSize)
         {
             // selection
-            int parent1 = alg.tournamentSelection(consts::factoriesToPick);
+            int parent1 = alg.rouletteSelection();
             int parent2 = alg.tournamentSelection(consts::factoriesToPick);
             while (parent1 == parent2)
             {

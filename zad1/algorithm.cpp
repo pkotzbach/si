@@ -1,11 +1,12 @@
 #include "algorithm.hpp"
-#include "machine.hpp"
+#include "dataProviders.hpp"
 #include <stdlib.h>
 #include <vector>
 #include <algorithm>
 
 #define tournamentSelectionDebug 0
 #define onePointCrossoverOperatorDebug 0
+#define rouletteSelectionDebug 1
 
 inline int calculateDistance(const Position &pos1, const Position &pos2)
 {
@@ -31,9 +32,9 @@ void Algorithm::feedMachines()
     machines = machineBuilder.makeMachines();
 }
 
-long long Algorithm::calculateCost(int factoryId)
+int Algorithm::calculateCost(int factoryId)
 {
-    long long cost = 0;
+    int cost = 0;
     for (int i = 0; i < population[factoryId].positions.size(); ++i)
     {
         if (population[factoryId].positions[i].machineId != -1)
@@ -93,12 +94,12 @@ void Algorithm::printCosts()
     }
 }
 
-long long Algorithm::getBestCost()
+int Algorithm::getBestCost()
 {
-    long long min = getSafeCost(0);
+    int min = getSafeCost(0);
     for (int i = 1; i < population.size(); ++i)
     {
-        long long temp = getSafeCost(i);
+        int temp = getSafeCost(i);
         if (temp < min)
             min = temp;
     }
@@ -145,10 +146,39 @@ int Algorithm::tournamentSelection(int factoriesToPick)
     return winnerId;
 }
 
-// int Algorithm::rouletteSelection()
-// {
+int Algorithm::rouletteSelection()
+{
+    int populationTotalCost = 0;
+    for (int i = 0; i < population.size(); ++i)
+    {
+        populationTotalCost += getSafeCost(i);
+    }
 
-// }
+    float usedSum = 0;
+    float random = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
+    if (rouletteSelectionDebug)
+    {
+        std::cout << "\nwylosowano liczbe: " << random << std::endl;
+    }
+
+    for (int i = 0; i < population.size(); ++i)
+    {
+        usedSum += static_cast<float>(getSafeCost(i)) / static_cast<float>(populationTotalCost);
+        if (rouletteSelectionDebug)
+        {
+            std::cout << "przeszlo przez: " << usedSum << ", i:" << i << std::endl;
+        }
+        if (usedSum + 0.00001 >= random)
+        {
+            if (rouletteSelectionDebug)
+            {
+                std::cout << "zwyciezca: " << i << std::endl;
+            }
+            return i;
+        }
+    }
+    return -1;
+}
 
 Factory Algorithm::onePointCrossoverOperator(Factory &factory1, Factory &factory2)
 {
@@ -212,7 +242,7 @@ Factory Algorithm::onePointCrossoverOperator(Factory &factory1, Factory &factory
     return factory;
 }
 
-long long Algorithm::getSafeCost(int factoryId)
+int Algorithm::getSafeCost(int factoryId)
 {
     if (population[factoryId].cost == -1)
     {

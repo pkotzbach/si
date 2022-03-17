@@ -20,8 +20,8 @@ struct Position
     int y;
     int machineId;
 
-    std::string toString() { return "(" + std::to_string(x) + ", " + std::to_string(y) + ")"; }
-    bool operator==(Position &pos)
+    std::string toString() const { return "(" + std::to_string(x) + ", " + std::to_string(y) + ")"; }
+    bool operator==(Position &pos) const
     {
         return pos.x == x && pos.y == y;
     }

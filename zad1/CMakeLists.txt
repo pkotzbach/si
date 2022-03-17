@@ -13,7 +13,8 @@ endif()
 add_executable(
     si 
     zad1.cpp
-    machine.cpp
+    dataProviders.cpp
+    factory.cpp
     algorithm.cpp
 )
 target_link_libraries(si PRIVATE nlohmann_json::nlohmann_json)
